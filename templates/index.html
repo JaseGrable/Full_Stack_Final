@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sleeper Leagues</title>
+</head>
+<body>
+    <h1>Enter Your Sleeper Username</h1>
+    <form method="POST">
+        <input type="text" name="username" placeholder="Sleeper username" required>
+        <button type="submit">Search</button>
+    </form>
+
+    {% if error_message %}
+        <p style="color:red;">{{ error_message }}</p>
+    {% endif %}
+
+    {% if leagues %}
+        <h2>Your Leagues</h2>
+        <ul>
+            {% for league in leagues %}
+                <li>
+                    <a href="{{ url_for('users', league_id=league['league_id'], league_name=league['name']) }}">
+                        {{ league['name'] }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</body>
+</html>

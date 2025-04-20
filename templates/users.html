@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Users in {{ league_name }}</title>
+</head>
+<body>
+    <h1>Users in {{ league_name }}</h1>
+
+    {% if error_message %}
+        <p style="color:red;">{{ error_message }}</p>
+    {% endif %}
+
+    {% if users %}
+        <ul>
+            {% for user in users %}
+                <li>
+                    <a href="{{ url_for('user_roster', league_id=league_id, user_id=user['user_id'], user_name=user['display_name']) }}">
+                        {{ user['display_name'] }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <a href="/">← Back</a>
+</body>
+</html>

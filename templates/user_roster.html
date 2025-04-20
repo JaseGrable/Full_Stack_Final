@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roster for {{ user_name }}</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="roster-container">
+        <h1 class="title">Roster for {{ user_name }}</h1>
+
+        {% if error_message %}
+            <p class="error">{{ error_message }}</p>
+        {% endif %}
+
+        {% if roster %}
+            <div class="summary">
+                <p><strong>Wins:</strong> {{ roster['settings']['wins'] }}</p>
+                <p><strong>Losses:</strong> {{ roster['settings']['losses'] }}</p>
+                <p><strong>Fantasy Points:</strong> {{ roster['settings']['fpts'] }}</p>
+            </div>
+
+            <!-- Flex container -->
+            <div class="roster-flex">
+                <!-- Starters -->
+                <div class="roster-group">
+                    <h2>Starters</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Team</th>
+                                <th>Position</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for player in starters_data %}
+                            <tr>
+                                <td>{{ player.name }}</td>
+                                <td>{{ player.team }}</td>
+                                <td>{{ player.position }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Bench -->
+                <div class="roster-group">
+                    <h2>Bench</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Team</th>
+                                <th>Position</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for player in bench_data %}
+                            <tr>
+                                <td>{{ player.name }}</td>
+                                <td>{{ player.team }}</td>
+                                <td>{{ player.position }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Taxi Squad -->
+                <div class="roster-group">
+                    <h2>Taxi Squad</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Team</th>
+                                <th>Position</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for player in taxi_data %}
+                            <tr>
+                                <td>{{ player.name }}</td>
+                                <td>{{ player.team }}</td>
+                                <td>{{ player.position }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        {% endif %}
+
+        <p><a href="/">← Back to Home</a></p>
+    </div>
+</body>
