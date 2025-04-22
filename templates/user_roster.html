@@ -45,9 +45,13 @@
                             <tr>
                                 <td>{{ player.name }}</td>
                                 <td class="team-info">
-                                    <!-- Display Team Logo and Name -->
-                                    <img src="{{ nfl_teams[player.team]['logo'] }}" alt="{{ nfl_teams[player.team]['name'] }} logo">
-                                    {{ nfl_teams[player.team]['name'] }}
+                                    <!-- Check if team is valid and exists in nfl_teams -->
+                                    {% if player.team and nfl_teams.get(player.team) %}
+                                        <img src="{{ nfl_teams[player.team]['logo'] }}" alt="{{ nfl_teams[player.team]['name'] }} logo">
+                                        {{ nfl_teams[player.team]['name'] }}
+                                    {% else %}
+                                        N/A
+                                    {% endif %}
                                 </td>
                                 <td>{{ player.position }}</td>
                             </tr>
@@ -72,8 +76,13 @@
                             <tr>
                                 <td>{{ player.name }}</td>
                                 <td class="team-info">
-                                    <img src="{{ nfl_teams[player.team]['logo'] }}" alt="{{ nfl_teams[player.team]['name'] }} logo">
-                                    {{ nfl_teams[player.team]['name'] }}
+                                    <!-- Check if team is valid and exists in nfl_teams -->
+                                    {% if player.team and nfl_teams.get(player.team) %}
+                                        <img src="{{ nfl_teams[player.team]['logo'] }}" alt="{{ nfl_teams[player.team]['name'] }} logo">
+                                        {{ nfl_teams[player.team]['name'] }}
+                                    {% else %}
+                                        N/A
+                                    {% endif %}
                                 </td>
                                 <td>{{ player.position }}</td>
                             </tr>
@@ -98,8 +107,13 @@
                             <tr>
                                 <td>{{ player.name }}</td>
                                 <td class="team-info">
-                                    <img src="{{ nfl_teams[player.team]['logo'] }}" alt="{{ nfl_teams[player.team]['name'] }} logo">
-                                    {{ nfl_teams[player.team]['name'] }}
+                                    <!-- Check if team is valid and exists in nfl_teams -->
+                                    {% if player.team and nfl_teams.get(player.team) %}
+                                        <img src="{{ nfl_teams[player.team]['logo'] }}" alt="{{ nfl_teams[player.team]['name'] }} logo">
+                                        {{ nfl_teams[player.team]['name'] }}
+                                    {% else %}
+                                        N/A
+                                    {% endif %}
                                 </td>
                                 <td>{{ player.position }}</td>
                             </tr>
