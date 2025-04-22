@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request
 import requests
 import sqlite3
+from nfl_teams import nfl_teams  # Import the dictionary from nfl_teams.py
 import os
 
 app = Flask(__name__)
@@ -37,7 +38,7 @@ def index():
         else:
             error_message = f"Failed to retrieve user data. Status code: {user_response.status_code}"
 
-    return render_template("index.html", leagues=leagues, error_message=error_message)
+    return render_template("index.html", leagues=leagues, error_message=error_message, nfl_teams=nfl_teams)
 
 # Users in League
 @app.route("/users/<league_id>/<league_name>", methods=["GET"])
@@ -55,7 +56,7 @@ def users(league_id, league_name):
     else:
         error_message = f"Failed to retrieve users. Status code: {users_response.status_code}"
 
-    return render_template("users.html", users=users, error_message=error_message, league_id=league_id, league_name=league_name)
+    return render_template("users.html", users=users, error_message=error_message, league_id=league_id, league_name=league_name, nfl_teams=nfl_teams)
 
 # Roster for a User
 @app.route("/roster/<league_id>/<user_id>/<user_name>", methods=["GET"])
@@ -150,7 +151,8 @@ def user_roster(league_id, user_id, user_name):
                            taxi_data=taxi_data,
                            roster=roster,
                            error_message=error_message,
-                           traded_picks=traded_picks)
+                           traded_picks=traded_picks,
+                           nfl_teams=nfl_teams)  # Pass nfl_teams to the template
 
 
 if __name__ == "__main__":

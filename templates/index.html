@@ -2,47 +2,47 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sleeper Leagues</title>
     <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
     <div class="toggle-container">
-        <button class="dark-toggle" onclick="toggleDarkMode()">🌙 Toggle Dark Mode</button>
+        <span class="dark-toggle" onclick="toggleDarkMode()">🌙 Toggle Dark Mode</span>
     </div>
 
-    <div class="content-container">
-        <h1>Enter Your Sleeper Username</h1>
-        <form method="POST">
-            <input type="text" name="username" placeholder="Sleeper username" required>
-            <button type="submit">Search</button>
-        </form>
+    <h1>Enter Your Sleeper Username</h1>
+    <form method="POST">
+        <input type="text" name="username" placeholder="Sleeper username" required>
+        <button type="submit">Search</button>
+    </form>
 
-        {% if error_message %}
-            <p class="error">{{ error_message }}</p>
-        {% endif %}
+    {% if error_message %}
+        <p class="error">{{ error_message }}</p>
+    {% endif %}
 
-        {% if leagues %}
-            <h2>Your Leagues</h2>
-            <ul class="league-list">
-                {% for league in leagues %}
-                    <li>
-                        <a href="{{ url_for('users', league_id=league['league_id'], league_name=league['name']) }}">
-                            {{ league['name'] }}
-                        </a>
-                    </li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-    </div>
+    {% if leagues %}
+        <h2>Your Leagues</h2>
+        <ul>
+            {% for league in leagues %}
+                <li>
+                    <a href="{{ url_for('users', league_id=league['league_id'], league_name=league['name']) }}">
+                        {{ league['name'] }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
 
     <script>
+        // Toggle dark mode
         function toggleDarkMode() {
             document.body.classList.toggle("dark-mode");
+            // Save the dark mode state in localStorage
             const isDarkMode = document.body.classList.contains('dark-mode');
             localStorage.setItem('darkMode', isDarkMode ? 'true' : 'false');
         }
 
+        // On page load, check if dark mode was previously enabled
         document.addEventListener('DOMContentLoaded', () => {
             const isDarkMode = localStorage.getItem('darkMode') === 'true';
             if (isDarkMode) {
