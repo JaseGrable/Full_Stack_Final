@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Panel</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="admin-container">
+        <h1>Admin Dashboard</h1>
+        <a href="{{ url_for('admin_logout') }}">Logout</a>
+
+        {% if comments %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Comment</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for comment in comments %}
+                    <tr>
+                        <td>{{ comment[1] }}</td>
+                        <td>{{ comment[2] }}</td>
+                        <td><a href="{{ url_for('delete_comment', comment_id=comment[0]) }}">Delete</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No comments to show.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

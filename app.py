@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, session
+from flask import Flask, render_template, request, redirect, session, url_for
 import requests
 import sqlite3
 from nfl_teams import nfl_teams
@@ -152,15 +152,65 @@ def user_roster(league_id, user_id, user_name):
     conn.close()
 
     return render_template("user_roster.html",
-                           user_name=user_name,
-                           starters_data=starters_data,
-                           bench_data=bench_data,
-                           taxi_data=taxi_data,
-                           roster=roster,
-                           error_message=error_message,
-                           traded_picks=traded_picks,
-                           nfl_teams=nfl_teams,
-                           comments=comments)
+                        user_name=user_name,
+                        starters_data=starters_data,
+                        bench_data=bench_data,
+                        taxi_data=taxi_data,
+                        roster=roster,
+                        error_message=error_message,
+                        traded_picks=traded_picks,
+                        nfl_teams=nfl_teams,
+                        comments=comments)
+
+# Admin login credentials
+ADMIN_USERNAME = "admin"
+ADMIN_PASSWORD = "password"
+
+# Route to view the admin dashboard
+@app.route("/admin", methods=["GET", "POST"])
+def admin():
+    if "admin_logged_in" not in session:
+        return redirect(url_for("admin_login"))
+
+    conn = sqlite3.connect("comments.db")
+    c = conn.cursor()
+    c.execute("SELECT id, username, comment FROM comments")
+    comments = c.fetchall()
+    conn.close()
+    return render_template("admin.html", comments=comments)
+
+# Admin login
+@app.route("/admin/login", methods=["GET", "POST"])
+def admin_login():
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
+        if username == ADMIN_USERNAME and password == ADMIN_PASSWORD:
+            session["admin_logged_in"] = True
+            return redirect(url_for("admin"))
+        else:
+            return render_template("admin_login.html", error="Invalid credentials")
+    return render_template("admin_login.html")
+
+# Admin logout
+@app.route("/admin/logout")
+def admin_logout():
+    session.pop("admin_logged_in", None)
+    return redirect(url_for("admin_login"))
+
+# Delete a comment
+@app.route("/admin/delete_comment/<int:comment_id>")
+def delete_comment(comment_id):
+    if "admin_logged_in" not in session:
+        return redirect(url_for("admin_login"))
+
+    conn = sqlite3.connect("comments.db")
+    c = conn.cursor()
+    c.execute("DELETE FROM comments WHERE id = ?", (comment_id,))
+    conn.commit()
+    conn.close()
+    return redirect(url_for("admin"))
+
 
 if __name__ == "__main__":
     app.run(debug=True)
