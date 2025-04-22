@@ -110,6 +110,26 @@
             </div>
         {% endif %}
 
+        <!-- Comments Section -->
+        <div class="comment-section">
+            <h2>Comments</h2>
+
+            {% if comments %}
+                <ul class="comment-list">
+                    {% for username, comment in comments %}
+                        <li><strong>{{ username }}</strong>: {{ comment }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No comments yet. Be the first!</p>
+            {% endif %}
+
+            <form action="" method="POST" class="comment-form">
+                <textarea name="comment" placeholder="Leave a comment..." required></textarea>
+                <button type="submit">Post Comment</button>
+            </form>
+        </div>
+
         <!-- Back to Home link -->
         <p><a href="/" class="back-link">← Back to Home</a></p>
     </div>

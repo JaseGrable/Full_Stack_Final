@@ -1,11 +1,11 @@
 from flask import Flask, render_template, request, redirect, session
 import requests
 import sqlite3
-from nfl_teams import nfl_teams  # Import the dictionary from nfl_teams.py
+from nfl_teams import nfl_teams
 import os 
 
 app = Flask(__name__)
-app.secret_key = os.urandom(24)  # Necessary for session management
+app.secret_key = os.urandom(24)
 
 # Home page
 @app.route("/", methods=["GET", "POST"])
@@ -39,7 +39,6 @@ def index():
         else:
             error_message = f"Failed to retrieve user data. Status code: {user_response.status_code}"
 
-        # Store the username in the session
         session['username'] = username
 
     return render_template("index.html", leagues=leagues, error_message=error_message, nfl_teams=nfl_teams)
@@ -95,7 +94,6 @@ def user_roster(league_id, user_id, user_name):
             taxi = roster.get("taxi", [])
             bench = [p for p in all_players if p not in starters and p not in taxi]
 
-            # Connect to player database
             conn = sqlite3.connect("nfl_players.db")
             cursor = conn.cursor()
 
@@ -129,19 +127,29 @@ def user_roster(league_id, user_id, user_name):
             taxi_data = [get_player_details(pid) for pid in taxi]
             conn.close()
 
-
     # Handle comment submission
     if request.method == "POST":
         comment_text = request.form.get("comment")
-        username = session.get("username", "")  # Get the username from the session
+        username = session.get("username", "")  
         conn = sqlite3.connect("comments.db")
         cursor = conn.cursor()
+        cursor.execute('''CREATE TABLE IF NOT EXISTS comments (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id TEXT,
+            username TEXT,
+            comment TEXT
+        )''')
         cursor.execute("INSERT INTO comments (user_id, username, comment) VALUES (?, ?, ?)", (user_id, username, comment_text))
         conn.commit()
         conn.close()
-
-        # Redirect to the same roster page after posting the comment
         return redirect(f"/roster/{league_id}/{user_id}/{user_name}")
+
+    # Retrieve existing comments
+    conn = sqlite3.connect("comments.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT username, comment FROM comments WHERE user_id = ?", (user_id,))
+    comments = cursor.fetchall()
+    conn.close()
 
     return render_template("user_roster.html",
                            user_name=user_name,
@@ -151,7 +159,8 @@ def user_roster(league_id, user_id, user_name):
                            roster=roster,
                            error_message=error_message,
                            traded_picks=traded_picks,
-                           nfl_teams=nfl_teams)
+                           nfl_teams=nfl_teams,
+                           comments=comments)
 
 if __name__ == "__main__":
     app.run(debug=True)
