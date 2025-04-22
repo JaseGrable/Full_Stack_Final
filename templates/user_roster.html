@@ -7,6 +7,10 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
+    <div class="toggle-container">
+        <button class="dark-toggle" onclick="toggleDarkMode()">🌙 Toggle Dark Mode</button>
+    </div>
+
     <div class="roster-container">
         <h1 class="title">Roster for {{ user_name }}</h1>
 
@@ -21,7 +25,7 @@
                 <p><strong>Fantasy Points:</strong> {{ roster['settings']['fpts'] }}</p>
             </div>
 
-            <!-- Flex container -->
+            <!-- Flex container for roster sections -->
             <div class="roster-flex">
                 <!-- Starters -->
                 <div class="roster-group">
@@ -94,6 +98,22 @@
             </div>
         {% endif %}
 
-        <p><a href="/">← Back to Home</a></p>
+        <p><a href="/" class="back-link">← Back to Home</a></p>
     </div>
+
+    <script>
+        function toggleDarkMode() {
+            document.body.classList.toggle("dark-mode");
+            const isDarkMode = document.body.classList.contains('dark-mode');
+            localStorage.setItem('darkMode', isDarkMode ? 'true' : 'false');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const isDarkMode = localStorage.getItem('darkMode') === 'true';
+            if (isDarkMode) {
+                document.body.classList.add('dark-mode');
+            }
+        });
+    </script>
 </body>
+</html>
