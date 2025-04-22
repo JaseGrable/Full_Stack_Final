@@ -61,12 +61,25 @@ def users(league_id, league_name):
 @app.route("/roster/<league_id>/<user_id>/<user_name>", methods=["GET"])
 def user_roster(league_id, user_id, user_name):
     rosters_url = f"https://api.sleeper.app/v1/league/{league_id}/rosters"
+    traded_picks_url = f"https://api.sleeper.app/v1/league/{league_id}/traded_picks"
+    users_url = f"https://api.sleeper.app/v1/league/{league_id}/users"
+
     rosters_response = requests.get(rosters_url)
+    traded_picks_response = requests.get(traded_picks_url)
+    users_response = requests.get(users_url)
 
     starters_data = []
     bench_data = []
     taxi_data = []
+    traded_picks = []
     error_message = None
+    roster = None
+    user_names = {}
+
+    if users_response.status_code == 200:
+        users = users_response.json()
+        # Map user_id to user_name for easier lookup
+        user_names = {user['user_id']: user['display_name'] for user in users}
 
     if rosters_response.status_code == 200:
         rosters = rosters_response.json()
@@ -76,9 +89,9 @@ def user_roster(league_id, user_id, user_name):
             starters = roster.get("starters", [])
             all_players = roster.get("players", [])
             taxi = roster.get("taxi", [])
-
             bench = [p for p in all_players if p not in starters and p not in taxi]
 
+            # Connect to player database
             conn = sqlite3.connect("nfl_players.db")
             cursor = conn.cursor()
 
@@ -87,12 +100,9 @@ def user_roster(league_id, user_id, user_name):
                     SELECT full_name, team, position FROM nfl_players WHERE player_id = ?
                 ''', (player_id,))
                 result = cursor.fetchone()
-
                 name = result[0] if result else "Unknown"
                 team = result[1] if result else "-"
                 position = result[2] if result else "-"
-
-                # Position color
                 position_colors = {
                     "QB": "#d0e1f9",
                     "RB": "#f9d0d0",
@@ -101,21 +111,33 @@ def user_roster(league_id, user_id, user_name):
                     "K": "#d0f9d9",
                     "DEF": "#fce0b2"
                 }
-                color = position_colors.get(position, "#ffffff")  # Default color if position is not found
-
+                color = position_colors.get(position, "#ffffff")
                 return {
                     "id": player_id,
                     "name": name,
                     "team": team,
                     "position": position,
-                    "position_color": color,  # Position color passed to the template
+                    "position_color": color,
                 }
 
             starters_data = [get_player_details(pid) for pid in starters]
             bench_data = [get_player_details(pid) for pid in bench]
             taxi_data = [get_player_details(pid) for pid in taxi]
-
             conn.close()
+
+            # Get this user's roster_id
+            user_roster_id = roster.get("roster_id")
+
+            # Filter traded picks belonging to this user
+            if traded_picks_response.status_code == 200:
+                all_traded_picks = traded_picks_response.json()
+                traded_picks = [
+                    {**pick, 
+                     "owner_name": user_names.get(pick.get("owner_id"), "Unknown"), 
+                     "previous_owner_name": user_names.get(pick.get("previous_owner_id"), "Unknown")}
+                    for pick in all_traded_picks
+                    if pick.get("owner_id") == user_roster_id or pick.get("previous_owner_id") == user_roster_id
+                ]
         else:
             error_message = f"No roster found for user {user_name}."
     else:
@@ -127,7 +149,8 @@ def user_roster(league_id, user_id, user_name):
                            bench_data=bench_data,
                            taxi_data=taxi_data,
                            roster=roster,
-                           error_message=error_message)
+                           error_message=error_message,
+                           traded_picks=traded_picks)
 
 
 if __name__ == "__main__":
