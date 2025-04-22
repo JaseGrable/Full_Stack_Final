@@ -1,3 +1,4 @@
+/* Default Theme Variables */
 :root {
     --bg-color: #f9f9f9;
     --text-color: #333;
@@ -7,6 +8,7 @@
     --border-color: #ddd;
 }
 
+/* Dark Mode Theme Variables */
 body.dark-mode {
     --bg-color: #121212;
     --text-color: #f0f0f0;
@@ -16,112 +18,105 @@ body.dark-mode {
     --border-color: #333;
 }
 
+/* Global Styles */
 body {
     background-color: var(--bg-color);
     color: var(--text-color);
     font-family: 'Segoe UI', sans-serif;
     margin: 0;
     padding: 20px;
+    text-align: center;
+}
+
+/* Dark Mode Button */
+.toggle-container {
+    text-align: right;
+    margin-bottom: 20px;
+}
+
+.dark-toggle {
+    cursor: pointer;
+    font-size: 16px;
+    color: var(--text-color);
+    background-color: var(--accent-color);
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.dark-toggle:hover {
+    background-color: var(--accent-color);
+    opacity: 0.8;
+}
+
+/* Main Content */
+.content-container {
+    max-width: 600px;
+    margin: auto;
 }
 
 h1, h2 {
     color: var(--text-color);
 }
 
-a {
-    color: var(--accent-color);
-    text-decoration: none;
-}
-
-a:hover {
-    text-decoration: underline;
-}
-
-form {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
-}
-
-input[type="text"] {
-    padding: 10px;
-    font-size: 16px;
-    margin-right: 10px;
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    background-color: var(--card-bg);
-    color: var(--text-color);
-}
-
-button {
-    padding: 10px 20px;
-    background-color: var(--accent-color);
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-button:hover {
-    opacity: 0.9;
-}
-
+/* Error Message */
 .error {
     color: var(--error-color);
     text-align: center;
 }
 
-.roster-container {
-    max-width: 1200px;
-    margin: auto;
+/* League List */
+.league-list {
+    list-style-type: none;
+    padding-left: 0;
+    margin: 20px 0;
 }
 
-.roster-flex {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: space-between;
+.league-list li {
+    margin: 10px 0;
 }
 
-.roster-group {
-    background: var(--card-bg);
-    padding: 15px;
-    border-radius: 10px;
-    flex: 1 1 30%;
-    min-width: 300px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-}
-
-.roster-group h2 {
-    margin-top: 0;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-}
-
-th, td {
-    border: 1px solid var(--border-color);
-    padding: 8px;
-    text-align: left;
-}
-
-.summary {
-    background-color: var(--card-bg);
-    padding: 10px;
-    border-radius: 6px;
-    margin-bottom: 20px;
-}
-
-.toggle-container {
-    text-align: right;
-    margin-bottom: 10px;
-}
-
-.dark-toggle {
-    cursor: pointer;
-    font-size: 14px;
+.league-list a {
+    text-decoration: none;
     color: var(--accent-color);
+    font-weight: bold;
+}
+
+.league-list a:hover {
+    text-decoration: underline;
+}
+
+/* User List */
+.user-list {
+    list-style-type: none;
+    padding-left: 0;
+    margin: 20px 0;
+}
+
+.user-list li {
+    margin: 10px 0;
+}
+
+.user-list a {
+    text-decoration: none;
+    color: var(--accent-color);
+    font-weight: bold;
+}
+
+.user-list a:hover {
+    text-decoration: underline;
+}
+
+/* Back Link */
+.back-link {
+    display: inline-block;
+    margin-top: 20px;
+    color: var(--accent-color);
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.back-link:hover {
+    text-decoration: underline;
 }

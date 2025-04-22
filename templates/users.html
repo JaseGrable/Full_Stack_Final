@@ -1,39 +1,51 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Users in {{ league_name }}</title>
     <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
     <div class="toggle-container">
-        <span class="dark-toggle" onclick="toggleDarkMode()">🌙 Toggle Dark Mode</span>
+        <button class="dark-toggle" onclick="toggleDarkMode()">🌙 Toggle Dark Mode</button>
     </div>
 
-    <h1>Users in {{ league_name }}</h1>
+    <div class="content-container">
+        <h1>Users in {{ league_name }}</h1>
 
-    {% if error_message %}
-        <p class="error">{{ error_message }}</p>
-    {% endif %}
+        {% if error_message %}
+            <p class="error">{{ error_message }}</p>
+        {% endif %}
 
-    {% if users %}
-        <ul>
-            {% for user in users %}
-                <li>
-                    <a href="{{ url_for('user_roster', league_id=league_id, user_id=user['user_id'], user_name=user['display_name']) }}">
-                        {{ user['display_name'] }}
-                    </a>
-                </li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+        {% if users %}
+            <ul class="user-list">
+                {% for user in users %}
+                    <li>
+                        <a href="{{ url_for('user_roster', league_id=league_id, user_id=user['user_id'], user_name=user['display_name']) }}">
+                            {{ user['display_name'] }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
 
-    <a href="/">← Back</a>
+        <a href="/" class="back-link">← Back</a>
+    </div>
 
     <script>
         function toggleDarkMode() {
             document.body.classList.toggle("dark-mode");
+            const isDarkMode = document.body.classList.contains('dark-mode');
+            localStorage.setItem('darkMode', isDarkMode ? 'true' : 'false');
         }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const isDarkMode = localStorage.getItem('darkMode') === 'true';
+            if (isDarkMode) {
+                document.body.classList.add('dark-mode');
+            }
+        });
     </script>
 </body>
 </html>
