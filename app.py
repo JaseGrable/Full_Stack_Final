@@ -1,10 +1,11 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, session
 import requests
 import sqlite3
 from nfl_teams import nfl_teams  # Import the dictionary from nfl_teams.py
-import os
+import os 
 
 app = Flask(__name__)
+app.secret_key = os.urandom(24)  # Necessary for session management
 
 # Home page
 @app.route("/", methods=["GET", "POST"])
@@ -38,6 +39,9 @@ def index():
         else:
             error_message = f"Failed to retrieve user data. Status code: {user_response.status_code}"
 
+        # Store the username in the session
+        session['username'] = username
+
     return render_template("index.html", leagues=leagues, error_message=error_message, nfl_teams=nfl_teams)
 
 # Users in League
@@ -59,7 +63,7 @@ def users(league_id, league_name):
     return render_template("users.html", users=users, error_message=error_message, league_id=league_id, league_name=league_name, nfl_teams=nfl_teams)
 
 # Roster for a User
-@app.route("/roster/<league_id>/<user_id>/<user_name>", methods=["GET"])
+@app.route("/roster/<league_id>/<user_id>/<user_name>", methods=["GET", "POST"])
 def user_roster(league_id, user_id, user_name):
     rosters_url = f"https://api.sleeper.app/v1/league/{league_id}/rosters"
     traded_picks_url = f"https://api.sleeper.app/v1/league/{league_id}/traded_picks"
@@ -79,7 +83,6 @@ def user_roster(league_id, user_id, user_name):
 
     if users_response.status_code == 200:
         users = users_response.json()
-        # Map user_id to user_name for easier lookup
         user_names = {user['user_id']: user['display_name'] for user in users}
 
     if rosters_response.status_code == 200:
@@ -126,23 +129,19 @@ def user_roster(league_id, user_id, user_name):
             taxi_data = [get_player_details(pid) for pid in taxi]
             conn.close()
 
-            # Get this user's roster_id
-            user_roster_id = roster.get("roster_id")
 
-            # Filter traded picks belonging to this user
-            if traded_picks_response.status_code == 200:
-                all_traded_picks = traded_picks_response.json()
-                traded_picks = [
-                    {**pick, 
-                     "owner_name": user_names.get(pick.get("owner_id"), "Unknown"), 
-                     "previous_owner_name": user_names.get(pick.get("previous_owner_id"), "Unknown")}
-                    for pick in all_traded_picks
-                    if pick.get("owner_id") == user_roster_id or pick.get("previous_owner_id") == user_roster_id
-                ]
-        else:
-            error_message = f"No roster found for user {user_name}."
-    else:
-        error_message = f"Failed to retrieve rosters. Status code: {rosters_response.status_code}"
+    # Handle comment submission
+    if request.method == "POST":
+        comment_text = request.form.get("comment")
+        username = session.get("username", "")  # Get the username from the session
+        conn = sqlite3.connect("comments.db")
+        cursor = conn.cursor()
+        cursor.execute("INSERT INTO comments (user_id, username, comment) VALUES (?, ?, ?)", (user_id, username, comment_text))
+        conn.commit()
+        conn.close()
+
+        # Redirect to the same roster page after posting the comment
+        return redirect(f"/roster/{league_id}/{user_id}/{user_name}")
 
     return render_template("user_roster.html",
                            user_name=user_name,
@@ -152,8 +151,7 @@ def user_roster(league_id, user_id, user_name):
                            roster=roster,
                            error_message=error_message,
                            traded_picks=traded_picks,
-                           nfl_teams=nfl_teams)  # Pass nfl_teams to the template
-
+                           nfl_teams=nfl_teams)
 
 if __name__ == "__main__":
     app.run(debug=True)

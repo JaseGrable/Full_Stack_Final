@@ -448,3 +448,66 @@ td.team-info img {
         margin-bottom: 0.5rem;
     }
 }
+
+/* General Button Styling */
+button {
+    padding: 0.5rem 1rem;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+button:focus {
+    outline: 3px solid #ffcc00; /* Add focus styling for accessibility */
+}
+
+/* Input and Form Styles */
+input[type="text"],
+input[type="search"],
+select {
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    width: 100%;
+    max-width: 400px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+input[type="text"]:focus,
+select:focus {
+    border-color: #007bff; /* Highlight input when focused */
+    outline: none;
+}
+
+/* Mobile First Layout */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #fff;
+    color: #000;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.roster-flex {
+    flex-direction: column; /* Start with column layout for mobile */
+    align-items: center;
+}
+
+.roster-group {
+    width: 100%;
+    max-width: 100%;
+    margin: 1rem 0;
+}
+
+@media (min-width: 768px) {
+    .roster-flex {
+        flex-direction: row; /* Switch to row layout for larger screens */
+        justify-content: space-between;
+    }
+}
+
